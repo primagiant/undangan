@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  frontend:
+    # Use your existing Dockerfile to build the frontend
+    build: .
+    container_name: frontend_app
+    # Note: No ports exposed to the host, NGINX will access it internally
+    networks:
+      - app_network
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    # Expose ports 80 (HTTP) and 443 (HTTPS) to the host machine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Map the custom NGINX config
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Volume for Certbot's webroot challenge (for verification)
+      - ./certbot/www:/var/www/certbot:ro
+      # Volume for the generated certificates (read-only for NGINX)
+      - ./certbot/conf:/etc/letsencrypt:ro
+    depends_on:
+      - frontend
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      # Volume for Certbot's webroot challenge (Certbot needs write access)
+      - ./certbot/www:/var/www/certbot:rw
+      # Volume for the generated certificates (Certbot needs write access)
+      - ./certbot/conf:/etc/letsencrypt:rw
+    # Only runs when manually executed (or for renewal)
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; done;'"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
