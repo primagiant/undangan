@@ -30,6 +30,18 @@
     <link rel="stylesheet" href="assets/css/style.css">
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get("name");
+
+            if (name) {
+                const penerimaElems = document.querySelectorAll(".modal-penerima");
+                penerimaElems.forEach(el => {
+                    el.textContent = decodeURIComponent(name).replace(/\+/g, " ");
+                });
+            }
+        });
+
         function CopyToClipboard(id) {
             var r = document.createRange();
             r.selectNode(document.getElementById(id));
