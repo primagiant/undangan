@@ -1,0 +1,31 @@
+services:
+  be:
+    build: ./be
+    image: primagiant/undangan-be:latest
+    container_name: undangan-be-app
+    ports:
+      - "8081:8081"
+    volumes:
+      - db-data:/root/
+    networks:
+      - undangan-net
+    restart: unless-stopped
+
+  fe:
+    build: ./fe
+    image: primagiant/undangan-fe:latest
+    container_name: undangan-fe-app
+    ports:
+      - "8080:80"
+    depends_on:
+      - be
+    networks:
+      - undangan-net
+    restart: unless-stopped
+
+volumes:
+  db-data:
+
+networks:
+  undangan-net:
+    driver: bridge
