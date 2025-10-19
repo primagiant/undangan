@@ -177,7 +177,7 @@
     /* Ucapan */
     function loadUcapan() {
         $.ajax({
-            url: "http://gelarpawiwahan.site:8081/ucapan",
+            url: "https://gelarpawiwahan.site:8081/ucapan",
             type: "GET",
             success: function (data) {
                 var container = $('.box_ucapan');
@@ -227,7 +227,7 @@
 
         if (nama && hadir && ucapan) {
             $.ajax({
-                url: "http://gelarpawiwahan.site:8081/save",
+                url: "https://gelarpawiwahan.site:8081/save",
                 type: "POST",
                 contentType: "application/json", // (BARU) Set content type ke JSON
                 data: JSON.stringify(dataToSend), // (BARU) Ubah objek ke string JSON
